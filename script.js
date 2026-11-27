@@ -3,472 +3,564 @@ let cookies = 0;
 let totalBaked = 0;
 let clickPower = 1;
 let totalCps = 0;
-let goldenBonus = 1;
+let multiplier = 1;
+let buyAmount = 1;
+let frenzyUntil = 0;
+let goldenUntil = 0;
+let lastTick = Date.now();
+let lastClick = 0;
+let clickStreak = 0;
+let titleClicks = 0;
+let secretUnlocked = false;
+let upgradesBought = [];
 
 const buildings = [
-  { name: "Curseur", icon: "👆", base: 15, cps: 0.1, owned: 0 },
-  { name: "Grand-mère", icon: "👵", base: 100, cps: 1, owned: 0 },
-  { name: "Ferme", icon: "🌾", base: 1100, cps: 8, owned: 0 },
-  { name: "Mine", icon: "⛏️", base: 12000, cps: 47, owned: 0 },
-  { name: "Usine", icon: "🏭", base: 130000, cps: 260, owned: 0 },
-  { name: "Banque", icon: "🏦", base: 1400000, cps: 1400, owned: 0 },
-  { name: "Temple", icon: "🏛️", base: 20000000, cps: 7800, owned: 0 },
-  { name: "Tour de magie", icon: "🪄", base: 330000000, cps: 44000, owned: 0 },
-  { name: "Vaisseau spatial", icon: "🚀", base: 5100000000, cps: 260000, owned: 0 },
-  { name: "Machine temporelle", icon: "⏳", base: 75000000000, cps: 1600000, owned: 0 }
+  {name:"Curseur",icon:"👆",base:15,cps:0.2,owned:0},
+  {name:"Grand-mère",icon:"👵",base:80,cps:1,owned:0},
+  {name:"Ferme",icon:"🌾",base:400,cps:5,owned:0},
+  {name:"Mine",icon:"⛏️",base:2000,cps:20,owned:0},
+  {name:"Usine",icon:"🏭",base:10000,cps:90,owned:0},
+  {name:"Banque",icon:"🏦",base:50000,cps:400,owned:0},
+  {name:"Temple",icon:"🏛️",base:250000,cps:1800,owned:0},
+  {name:"Tour magique",icon:"🪄",base:1200000,cps:8000,owned:0},
+  {name:"Vaisseau spatial",icon:"🚀",base:6000000,cps:35000,owned:0},
+  {name:"Machine temporelle",icon:"⏳",base:30000000,cps:150000,owned:0},
+  {name:"Condensateur",icon:"⚡",base:150000000,cps:700000,owned:0},
+  {name:"Portail",icon:"🌀",base:750000000,cps:3500000,owned:0},
+  {name:"Usine à cookies",icon:"🍪",base:4000000000,cps:18000000,owned:0},
+  {name:"Dimension parallèle",icon:"🌌",base:20000000000,cps:90000000,owned:0},
+  {name:"Ordinateur quantique",icon:"💻",base:100000000000,cps:450000000,owned:0},
+  {name:"Multivers",icon:"🌠",base:500000000000,cps:2200000000,owned:0},
+  {name:"Dieu du cookie",icon:"👑",base:2500000000000,cps:11000000000,owned:0},
+  {name:"Réalité sucrée",icon:"✨",base:12500000000000,cps:55000000000,owned:0}
 ];
 
 const upgrades = [
-  {
-    name: "Doigt renforcé",
-    description: "Double la puissance des clics",
-    cost: 100,
-    type: "click",
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Doigt en or",
-    description: "Double encore la puissance des clics",
-    cost: 1000,
-    type: "click",
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Grandes mains",
-    description: "Triple la puissance des clics",
-    cost: 10000,
-    type: "click",
-    multiplier: 3,
-    bought: false
-  },
-  {
-    name: "Curseurs améliorés",
-    description: "Double la production des curseurs",
-    cost: 500,
-    type: "building",
-    building: 0,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Recettes de grand-mère",
-    description: "Double la production des grand-mères",
-    cost: 2000,
-    type: "building",
-    building: 1,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Engrais magique",
-    description: "Double la production des fermes",
-    cost: 15000,
-    type: "building",
-    building: 2,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Machines perfectionnées",
-    description: "Double la production des mines",
-    cost: 100000,
-    type: "building",
-    building: 3,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Super usines",
-    description: "Double la production des usines",
-    cost: 1000000,
-    type: "building",
-    building: 4,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Technologie avancée",
-    description: "Double la production des banques",
-    cost: 10000000,
-    type: "building",
-    building: 5,
-    multiplier: 2,
-    bought: false
-  },
-  {
-    name: "Pouvoir ancien",
-    description: "Double la production des temples",
-    cost: 100000000,
-    type: "building",
-    building: 6,
-    multiplier: 2,
-    bought: false
-  }
+  {name:"Doigt renforcé",desc:"Clics x2",cost:100,type:"click",value:2},
+  {name:"Doigt en or",desc:"Clics x2",cost:1000,type:"click",value:2},
+  {name:"Main de pâtissier",desc:"Clics x3",cost:12000,type:"click",value:3},
+  {name:"Main légendaire",desc:"Clics x5",cost:250000,type:"click",value:5},
+  {name:"Curseurs rapides",desc:"Curseurs x2",cost:300,type:"building",index:0,value:2},
+  {name:"Grand-mères expertes",desc:"Grand-mères x2",cost:1500,type:"building",index:1,value:2},
+  {name:"Graines magiques",desc:"Fermes x2",cost:8000,type:"building",index:2,value:2},
+  {name:"Pioches en diamant",desc:"Mines x2",cost:35000,type:"building",index:3,value:2},
+  {name:"Chaînes automatisées",desc:"Usines x2",cost:150000,type:"building",index:4,value:2},
+  {name:"Intérêts composés",desc:"Banques x2",cost:700000,type:"building",index:5,value:2},
+  {name:"Sagesse ancienne",desc:"Temples x2",cost:3000000,type:"building",index:6,value:2},
+  {name:"Sorts puissants",desc:"Tours magiques x2",cost:15000000,type:"building",index:7,value:2},
+  {name:"Moteurs améliorés",desc:"Vaisseaux x2",cost:80000000,type:"building",index:8,value:2},
+  {name:"Boucle temporelle",desc:"Machines temporelles x2",cost:400000000,type:"building",index:9,value:2},
+  {name:"Production générale",desc:"Tous les bâtiments x1,5",cost:2000000000,type:"all",value:1.5},
+  {name:"Pouvoir cosmique",desc:"Tous les bâtiments x2",cost:50000000000,type:"all",value:2}
 ];
 
 const achievements = [
-  { name: "Premier cookie", target: 1, unlocked: false },
-  { name: "Débutant", target: 100, unlocked: false },
-  { name: "Accro aux cookies", target: 1000, unlocked: false },
-  { name: "Millionnaire", target: 1000000, unlocked: false },
-  { name: "Empire du cookie", target: 100000000, unlocked: false },
-  { name: "Légende", target: 1000000000, unlocked: false }
+  ["Premier cookie",1],
+  ["Petit gourmand",100],
+  ["Centenaire",1000],
+  ["Collectionneur",10000],
+  ["Petite usine",100000],
+  ["Millionnaire",1000000],
+  ["Roi du goûter",100000000],
+  ["Empire du cookie",1000000000],
+  ["Maître du multivers",1000000000000]
 ];
 
-const cookie = document.getElementById("cookie");
-const countDisplay = document.getElementById("cookie-count");
-const productionDisplay = document.getElementById("production");
-const clickDisplay = document.getElementById("click-power");
+const $ = id => document.getElementById(id);
 
-function formatNumber(number) {
-  if (number < 1000) return Math.floor(number).toLocaleString("fr-FR");
+function formatNumber(n) {
+  if (!Number.isFinite(n)) return "∞";
+  if (n < 1000) return Math.floor(n).toLocaleString("fr-FR");
 
-  const units = ["", "K", "M", "Md", "Bn", "T", "Qa"];
-  let index = 0;
+  const units = ["","K","M","Md","Bn","T","Qa","Qi"];
+  let i = 0;
 
-  while (number >= 1000 && index < units.length - 1) {
-    number /= 1000;
-    index++;
+  while (n >= 1000 && i < units.length-1) {
+    n /= 1000;
+    i++;
   }
 
-  return number.toFixed(2) + units[index];
+  return n.toFixed(2).replace(".",",") + units[i];
 }
 
-function getBuildingCost(building) {
-  return Math.ceil(building.base * Math.pow(1.15, building.owned));
+function getCost(building,quantity=1) {
+  let cost = 0;
+
+  for(let i=0;i<quantity;i++) {
+    cost += Math.ceil(building.base * Math.pow(1.12,building.owned+i));
+  }
+
+  return Math.ceil(cost);
 }
 
 function calculateCps() {
-  totalCps = buildings.reduce((sum, building) => {
-    return sum + building.owned * building.cps;
-  }, 0);
+  totalCps = buildings.reduce(
+    (sum,b) => sum+b.owned*b.cps,0
+  );
+
+  return totalCps;
+}
+
+function showFloating(message) {
+  const el = $("floating-text");
+  if(!el) return;
+
+  el.textContent = message;
+  el.classList.remove("float");
+  void el.offsetWidth;
+  el.classList.add("float");
+}
+
+function currentMultiplier() {
+  return Date.now() < frenzyUntil ? 7 : 1;
 }
 
 function updateDisplay() {
   calculateCps();
 
-  countDisplay.textContent = formatNumber(cookies) + " cookies";
-  productionDisplay.textContent = formatNumber(totalCps * goldenBonus) + " cookies par seconde";
-  clickDisplay.textContent = formatNumber(clickPower * goldenBonus) + " cookies par clic";
+  $("cookie-count").textContent =
+    formatNumber(cookies)+" cookies";
 
-  document.getElementById("total-baked").textContent =
-    "Total produit : " + formatNumber(totalBaked);
+  $("production").textContent =
+    formatNumber(totalCps*currentMultiplier())+" cookies par seconde";
 
-  document.querySelectorAll(".buy-button").forEach((button, index) => {
-    button.disabled = cookies < getBuildingCost(buildings[index]);
+  $("click-power").textContent =
+    formatNumber(clickPower*currentMultiplier())+" cookies par clic";
+
+  $("total-baked").textContent =
+    "Total produit : "+formatNumber(totalBaked);
+
+  $("save-status").textContent = "Sauvegarde automatique activée";
+
+  updateAchievements();
+  updateButtons();
+}
+
+function updateButtons() {
+  document.querySelectorAll(".buy-button[data-index]").forEach(button => {
+    const b = buildings[Number(button.dataset.index)];
+    const quantity = buyAmount === "max" ? 1 : buyAmount;
+
+    button.disabled = cookies < getCost(b,quantity);
+
+    button.innerHTML =
+      `Acheter ${buyAmount === "max" ? "MAX" : "x"+buyAmount}<br>`+
+      `${formatNumber(getCost(b,quantity))} 🍪`;
   });
 
   document.querySelectorAll(".upgrade-button").forEach(button => {
-    const upgrade = upgrades[Number(button.dataset.id)];
+    const upgrade = upgrades[Number(button.dataset.index)];
     button.disabled = cookies < upgrade.cost;
   });
-
-  updateAchievements();
 }
-
-function showFloatingText(text) {
-  const floating = document.getElementById("floating-text");
-
-  floating.textContent = text;
-  floating.classList.remove("float");
-
-  void floating.offsetWidth;
-
-  floating.classList.add("float");
-}
-
-cookie.addEventListener("click", () => {
-  const gain = clickPower * goldenBonus;
-
-  cookies += gain;
-  totalBaked += gain;
-
-  showFloatingText("+" + formatNumber(gain));
-
-  updateDisplay();
-});
 
 function renderBuildings() {
-  const shop = document.getElementById("building-shop");
-
+  const shop = $("building-shop");
   shop.innerHTML = "";
 
-  buildings.forEach((building, index) => {
-    const cost = getBuildingCost(building);
+  buildings.forEach((b,index) => {
+    const row = document.createElement("div");
+    row.className = "building";
 
-    const item = document.createElement("div");
-    item.className = "building";
-
-    item.innerHTML = `
-      <div class="building-icon">${building.icon}</div>
+    row.innerHTML = `
+      <div class="building-icon">${b.icon}</div>
       <div class="building-info">
-        <div class="building-name">${building.name}</div>
+        <div class="building-name">${b.name}</div>
         <div class="building-detail">
-          Possédés : ${building.owned}<br>
-          Production : ${formatNumber(building.cps * building.owned)} / sec
+          Possédés : <span id="owned-${index}">${b.owned}</span><br>
+          Production : ${formatNumber(b.cps*b.owned)} / sec<br>
+          Prochain prix : ${formatNumber(getCost(b))} 🍪
         </div>
       </div>
-      <button class="buy-button" ${cookies < cost ? "disabled" : ""}>
-        Acheter<br>${formatNumber(cost)} 🍪
-      </button>
+      <button class="buy-button" data-index="${index}"></button>
     `;
 
-    item.querySelector("button").addEventListener("click", () => {
-      buyBuilding(index);
-    });
-
-    shop.appendChild(item);
+    row.querySelector("button").addEventListener("click",()=>buyBuilding(index));
+    shop.appendChild(row);
   });
-}
 
-function buyBuilding(index) {
-  const building = buildings[index];
-  const cost = getBuildingCost(building);
-
-  if (cookies < cost) return;
-
-  cookies -= cost;
-  building.owned++;
-
-  renderBuildings();
-  updateDisplay();
+  updateButtons();
 }
 
 function renderUpgrades() {
-  const shop = document.getElementById("upgrade-shop");
-
+  const shop = $("upgrade-shop");
   shop.innerHTML = "";
 
-  upgrades.forEach((upgrade, index) => {
-    if (upgrade.bought) return;
+  upgrades.forEach((u,index) => {
+    if(upgradesBought.includes(u.name)) return;
 
     const button = document.createElement("button");
     button.className = "upgrade-button";
-    button.dataset.id = index;
-    button.disabled = cookies < upgrade.cost;
+    button.dataset.index = index;
 
-    button.innerHTML = `
-      ${upgrade.name}<br>
-      <small>${upgrade.description}</small><br>
-      💰 ${formatNumber(upgrade.cost)} cookies
-    `;
+    button.innerHTML =
+      `${u.name}<br><small>${u.desc}</small><br>💰 ${formatNumber(u.cost)} cookies`;
 
-    button.addEventListener("click", () => buyUpgrade(index));
-
+    button.addEventListener("click",()=>buyUpgrade(index));
     shop.appendChild(button);
   });
+
+  updateButtons();
+}
+
+function renderBuyControls() {
+  const shop = $("building-shop");
+  if($("buy-controls")) return;
+
+  const controls = document.createElement("div");
+  controls.id = "buy-controls";
+  controls.style.cssText =
+    "display:flex;gap:8px;flex-wrap:wrap;margin:15px 0;";
+
+  [1,10,100,"max"].forEach(amount => {
+    const button = document.createElement("button");
+    button.className = "buy-button";
+    button.textContent = amount === "max" ? "MAX" : "x"+amount;
+
+    button.addEventListener("click",()=>{
+      buyAmount = amount;
+
+      controls.querySelectorAll("button").forEach(b => {
+        b.style.outline = "none";
+      });
+
+      button.style.outline = "2px solid #ffd36f";
+      updateButtons();
+    });
+
+    controls.appendChild(button);
+  });
+
+  shop.before(controls);
+}
+
+function buyBuilding(index) {
+  const b = buildings[index];
+
+  let quantity = buyAmount === "max" ? 0 : buyAmount;
+
+  if(buyAmount === "max") {
+    while(quantity < 10000 &&
+      cookies >= getCost(b,quantity+1)) {
+      quantity++;
+    }
+  }
+
+  if(quantity < 1) return;
+
+  const cost = getCost(b,quantity);
+  if(cookies < cost) return;
+
+  cookies -= cost;
+  b.owned += quantity;
+
+  renderBuildings();
+  updateDisplay();
+  saveGame();
 }
 
 function buyUpgrade(index) {
-  const upgrade = upgrades[index];
+  const u = upgrades[index];
 
-  if (upgrade.bought || cookies < upgrade.cost) return;
+  if(upgradesBought.includes(u.name) || cookies < u.cost) return;
 
-  cookies -= upgrade.cost;
-  upgrade.bought = true;
+  cookies -= u.cost;
+  upgradesBought.push(u.name);
 
-  if (upgrade.type === "click") {
-    clickPower *= upgrade.multiplier;
+  if(u.type === "click") clickPower *= u.value;
+
+  if(u.type === "building") {
+    buildings[u.index].cps *= u.value;
   }
 
-  if (upgrade.type === "building") {
-    buildings[upgrade.building].cps *= upgrade.multiplier;
+  if(u.type === "all") {
+    buildings.forEach(b => b.cps *= u.value);
   }
 
   renderUpgrades();
   renderBuildings();
   updateDisplay();
+  saveGame();
 }
 
 function updateAchievements() {
-  const list = document.getElementById("achievement-list");
+  const list = $("achievement-list");
+  if(!list) return;
 
-  achievements.forEach(achievement => {
-    if (totalBaked >= achievement.target && !achievement.unlocked) {
-      achievement.unlocked = true;
-      showFloatingText("🏆 Succès débloqué !");
-    }
-  });
+  list.innerHTML = achievements.map(a => {
+    const unlocked = totalBaked >= a[1];
 
-  list.innerHTML = achievements.map(achievement => `
-    <div class="achievement ${achievement.unlocked ? "unlocked" : ""}">
-      ${achievement.unlocked ? "🏆" : "🔒"}
-      ${achievement.name}
-      ${achievement.unlocked ? "✓" : ""}
-    </div>
-  `).join("");
+    return `
+      <div class="achievement ${unlocked ? "unlocked" : ""}">
+        ${unlocked ? "🏆" : "🔒"} ${a[0]}
+        ${unlocked ? "✓" : "— "+formatNumber(a[1])+" cookies"}
+      </div>
+    `;
+  }).join("");
 
-  const next = achievements.find(a => !a.unlocked);
+  const next = achievements.find(a => totalBaked < a[1]);
 
-  const progress = document.getElementById("achievement-progress");
-  const text = document.getElementById("achievement-text");
+  if($("achievement-progress")) {
+    const previous = achievements.filter(a => a[1] < (next?.[1] || Infinity)).slice(-1)[0];
+    const start = previous ? previous[1] : 0;
 
-  if (next) {
-    const previous = achievements[achievements.indexOf(next) - 1];
-    const start = previous ? previous.target : 0;
-    const percentage = Math.min(
-      100,
-      ((totalBaked - start) / (next.target - start)) * 100
-    );
+    $("achievement-progress").style.width =
+      (next ? Math.min(100,(totalBaked-start)/(next[1]-start)*100) : 100)+"%";
+  }
 
-    progress.style.width = percentage + "%";
-    text.textContent = next.name + " : " +
-      formatNumber(totalBaked) + " / " + formatNumber(next.target);
-  } else {
-    progress.style.width = "100%";
-    text.textContent = "Tous les succès débloqués !";
+  if($("achievement-text")) {
+    $("achievement-text").textContent = next
+      ? next[0]+" : "+formatNumber(totalBaked)+" / "+formatNumber(next[1])
+      : "Tous les succès débloqués !";
   }
 }
 
-// Production automatique
-setInterval(() => {
-  const gain = totalCps * goldenBonus / 10;
+// CLIC SUR LE COOKIE
+$("cookie").addEventListener("click",()=>{
+  const now = Date.now();
 
-  if (gain > 0) {
-    cookies += gain;
-    totalBaked += gain;
-    updateDisplay();
+  clickStreak = now-lastClick < 700 ? clickStreak+1 : 1;
+  lastClick = now;
+
+  const gain = clickPower*currentMultiplier();
+
+  cookies += gain;
+  totalBaked += gain;
+
+  showFloating("+"+formatNumber(gain));
+
+  if(clickStreak === 25) {
+    const bonus = clickPower*10;
+    cookies += bonus;
+    totalBaked += bonus;
+    showFloating("🔥 Série de clics ! +"+formatNumber(bonus));
   }
-}, 100);
-
-// Cookies dorés
-function spawnGoldenCookie() {
-  const golden = document.getElementById("golden-cookie");
-
-  golden.classList.remove("hidden");
-
-  setTimeout(() => {
-    golden.classList.add("hidden");
-  }, 10000);
-}
-
-document.getElementById("golden-cookie").addEventListener("click", () => {
-  const reward = Math.max(50, totalCps * 60, cookies * 0.05);
-
-  cookies += reward;
-  totalBaked += reward;
-
-  goldenBonus = 7;
-
-  showFloatingText("✨ +" + formatNumber(reward));
-
-  document.getElementById("golden-cookie").classList.add("hidden");
-
-  setTimeout(() => {
-    goldenBonus = 1;
-    updateDisplay();
-  }, 10000);
 
   updateDisplay();
 });
 
-function scheduleGoldenCookie() {
-  const delay = 25000 + Math.random() * 25000;
+// PRODUCTION AUTOMATIQUE
+function gameTick() {
+  const now = Date.now();
+  const elapsed = Math.min((now-lastTick)/1000,5);
+  lastTick = now;
 
-  setTimeout(() => {
-    spawnGoldenCookie();
-    scheduleGoldenCookie();
-  }, delay);
+  const gain = calculateCps()*currentMultiplier()*elapsed;
+
+  if(gain > 0) {
+    cookies += gain;
+    totalBaked += gain;
+  }
+
+  updateDisplay();
 }
 
-// Sauvegarde
+setInterval(gameTick,100);
+
+// COOKIE DORÉ
+function spawnGoldenCookie() {
+  const golden = $("golden-cookie");
+  if(!golden) return;
+
+  golden.style.left = (10+Math.random()*70)+"%";
+  golden.style.right = "auto";
+  golden.classList.remove("hidden");
+
+  setTimeout(()=>golden.classList.add("hidden"),12000);
+}
+
+$("golden-cookie").addEventListener("click",()=>{
+  const reward = Math.max(50,totalCps*60,cookies*.05);
+
+  cookies += reward;
+  totalBaked += reward;
+
+  frenzyUntil = Date.now()+12000;
+
+  $("golden-cookie").classList.add("hidden");
+
+  showFloating("✨ COOKIE DORÉ +"+formatNumber(reward));
+
+  updateDisplay();
+});
+
+function scheduleGolden() {
+  setTimeout(()=>{
+    spawnGoldenCookie();
+    scheduleGolden();
+  },30000+Math.random()*30000);
+}
+
+// ÉVÉNEMENTS ALÉATOIRES
+function randomEvent() {
+  const events = [
+    {
+      name:"🍀 Chance du pâtissier !",
+      action:()=> {
+        const bonus = Math.max(100,totalCps*20);
+        cookies += bonus;
+        totalBaked += bonus;
+      }
+    },
+    {
+      name:"⚡ Super production !",
+      action:()=> {
+        frenzyUntil = Date.now()+15000;
+      }
+    },
+    {
+      name:"🍪 Pluie de cookies !",
+      action:()=> {
+        const bonus = Math.max(250,totalCps*35);
+        cookies += bonus;
+        totalBaked += bonus;
+      }
+    }
+  ];
+
+  const event = events[Math.floor(Math.random()*events.length)];
+  event.action();
+
+  showFloating(event.name);
+  updateDisplay();
+}
+
+setInterval(()=>{
+  if(Math.random()<0.08) randomEvent();
+},60000);
+
+// EASTER EGG : CLIQUER 10 FOIS SUR LE TITRE
+document.querySelector("h1")?.addEventListener("click",()=>{
+  titleClicks++;
+
+  if(titleClicks>=10 && !secretUnlocked) {
+    secretUnlocked = true;
+
+    cookies += 5000;
+    totalBaked += 5000;
+
+    showFloating("🥚 SECRET DÉCOUVERT ! +5 000");
+    updateDisplay();
+    saveGame();
+  }
+});
+
+// EASTER EGG : TAPER COOKIE AU CLAVIER
+let secretKeys = "";
+
+document.addEventListener("keydown",event=>{
+  if(event.key.length===1) {
+    secretKeys=(secretKeys+event.key.toLowerCase()).slice(-6);
+  }
+
+  if(secretKeys==="cookie") {
+    const bonus=Math.max(1000,totalCps*30);
+
+    cookies+=bonus;
+    totalBaked+=bonus;
+
+    secretKeys="";
+    showFloating("🥚 SECRET COOKIE ! +"+formatNumber(bonus));
+
+    updateDisplay();
+  }
+});
+
+// SAUVEGARDE
 function saveGame() {
   const data = {
     cookies,
     totalBaked,
     clickPower,
     buildings,
-    upgrades,
-    achievements,
-    lastSave: Date.now()
+    upgradesBought,
+    lastSave:Date.now(),
+    secretUnlocked
   };
 
-  localStorage.setItem("cookieClickerSave", JSON.stringify(data));
-
-  document.getElementById("save-status").textContent = "Partie sauvegardée ✓";
+  try {
+    localStorage.setItem("cookieClickerSave",JSON.stringify(data));
+    $("save-status").textContent="Sauvegardé ✓";
+  } catch(error) {
+    console.warn("Sauvegarde impossible",error);
+  }
 }
 
 function loadGame() {
-  const saved = localStorage.getItem("cookieClickerSave");
-
-  if (!saved) return;
-
   try {
-    const data = JSON.parse(saved);
+    const raw=localStorage.getItem("cookieClickerSave");
+    if(!raw) return;
 
-    cookies = data.cookies || 0;
-    totalBaked = data.totalBaked || 0;
-    clickPower = data.clickPower || 1;
+    const data=JSON.parse(raw);
 
-    if (data.buildings) {
-      buildings.forEach((building, index) => {
-        if (data.buildings[index]) {
-          building.owned = data.buildings[index].owned || 0;
-          building.cps = data.buildings[index].cps;
+    cookies=Number(data.cookies)||0;
+    totalBaked=Number(data.totalBaked)||0;
+    clickPower=Number(data.clickPower)||1;
+    secretUnlocked=Boolean(data.secretUnlocked);
+
+    if(Array.isArray(data.buildings)) {
+      data.buildings.forEach(saved=>{
+        const b=buildings.find(item=>item.name===saved.name);
+
+        if(b) {
+          b.owned=Number(saved.owned)||0;
+          if(Number.isFinite(saved.cps)) b.cps=saved.cps;
         }
       });
     }
 
-    if (data.upgrades) {
-      upgrades.forEach((upgrade, index) => {
-        if (data.upgrades[index]) {
-          upgrade.bought = data.upgrades[index].bought || false;
+    if(Array.isArray(data.upgradesBought)) {
+      upgradesBought=data.upgradesBought;
+    } else if(Array.isArray(data.upgrades)) {
+      data.upgrades.forEach((u,index)=>{
+        if(u.bought && upgrades[index]) {
+          upgradesBought.push(upgrades[index].name);
         }
       });
     }
 
-    if (data.achievements) {
-      achievements.forEach((achievement, index) => {
-        if (data.achievements[index]) {
-          achievement.unlocked = data.achievements[index].unlocked || false;
-        }
-      });
-    }
-
-    // Production pendant l'absence, limitée à 8 heures
-    if (data.lastSave) {
-      const elapsed = Math.min(
-        (Date.now() - data.lastSave) / 1000,
-        8 * 60 * 60
+    if(data.lastSave) {
+      const elapsed=Math.min(
+        8*60*60,
+        Math.max(0,(Date.now()-data.lastSave)/1000)
       );
 
-      const offlineCookies = calculateOfflineProduction() * elapsed;
+      const offline=calculateCps()*elapsed;
 
-      cookies += offlineCookies;
-      totalBaked += offlineCookies;
+      cookies+=offline;
+      totalBaked+=offline;
+
+      if(offline>0) {
+        setTimeout(()=>{
+          alert("Bienvenue ! Tu as gagné "+formatNumber(offline)+" cookies pendant ton absence !");
+        },500);
+      }
     }
-
-  } catch (error) {
-    console.error("Erreur de sauvegarde :", error);
+  } catch(error) {
+    console.warn("Erreur de sauvegarde",error);
   }
 }
 
-function calculateOfflineProduction() {
-  return buildings.reduce((sum, building) => {
-    return sum + building.owned * building.cps;
-  }, 0);
-}
-
-document.getElementById("save-button").addEventListener("click", saveGame);
-
-document.getElementById("reset-button").addEventListener("click", () => {
-  if (!confirm("Attention ! Veux-tu vraiment supprimer toute ta partie ?")) {
-    return;
-  }
-
-  localStorage.removeItem("cookieClickerSave");
-  location.reload();
+// BOUTONS
+$("save-button").addEventListener("click",()=>{
+  saveGame();
+  showFloating("💾 Partie sauvegardée !");
 });
 
-// Démarrage
+$("reset-button").addEventListener("click",()=>{
+  if(confirm("Veux-tu vraiment supprimer toute ta partie ?")) {
+    localStorage.removeItem("cookieClickerSave");
+    location.reload();
+  }
+});
+
+// DÉMARRAGE
 loadGame();
 renderBuildings();
 renderUpgrades();
+renderBuyControls();
 updateDisplay();
-scheduleGoldenCookie();
 
-setInterval(saveGame, 10000);
-
-window.addEventListener("beforeunload", saveGame);
+scheduleGolden();
+setInterval(saveGame,15000);
+window.addEventListener("beforeunload",saveGame);
