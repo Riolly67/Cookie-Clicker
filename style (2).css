@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5deb3;
+  color: #754321;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.game {
+  padding: 24px;
+}
+
+h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 7vw, 3rem);
+}
+
+#score {
+  margin: 0 0 24px;
+  font-size: 1.7rem;
+}
+
+#cookie {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-size: clamp(110px, 25vw, 170px);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+#cookie:active {
+  transform: scale(0.88);
+}
+
+.hint {
+  margin-top: 22px;
+  color: #8a5a35;
+}
