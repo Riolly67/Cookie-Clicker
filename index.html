@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,11 +9,61 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <main class="game">
-    <h1>Cookie Clicker</h1>
-    <p id="score" aria-live="polite">Cookies : 0</p>
-    <button id="cookie" type="button" aria-label="Cliquer sur le cookie">🍪</button>
-    <p class="hint">Clique sur le cookie pour gagner des cookies !</p>
-  </main>
+
+<header>
+  <h1>🍪 Cookie Clicker</h1>
+  <div class="header-stats">
+    <span id="total-baked">Total produit : 0</span>
+    <span id="save-status">Sauvegarde automatique</span>
+  </div>
+</header>
+
+<main class="game-layout">
+
+  <section class="cookie-section">
+    <div class="stats">
+      <div id="cookie-count">0 cookies</div>
+      <div id="production">0 cookies par seconde</div>
+      <div id="click-power">1 cookie par clic</div>
+    </div>
+
+    <div class="cookie-area">
+      <button id="cookie" aria-label="Cliquer sur le cookie">🍪</button>
+      <div id="floating-text"></div>
+      <button id="golden-cookie" class="hidden">🍪✨</button>
+    </div>
+
+    <p class="click-hint">Clique sur le gros cookie !</p>
+
+    <div class="progress-box">
+      <p>Prochain succès</p>
+      <div class="progress-bar">
+        <div id="achievement-progress"></div>
+      </div>
+      <p id="achievement-text">Premier cookie : 0 / 1</p>
+    </div>
+
+    <div class="achievements">
+      <h2>🏆 Succès</h2>
+      <div id="achievement-list"></div>
+    </div>
+  </section>
+
+  <section class="shop-section">
+    <h2>🏪 Boutique</h2>
+    <p class="shop-subtitle">Achète des bâtiments pour produire automatiquement.</p>
+    <div id="building-shop"></div>
+
+    <h2 class="upgrade-heading">⚡ Améliorations</h2>
+    <div id="upgrade-shop"></div>
+  </section>
+
+</main>
+
+<footer>
+  <button id="save-button">💾 Sauvegarder</button>
+  <button id="reset-button">🗑️ Réinitialiser la partie</button>
+</footer>
+
 </body>
 </html>
