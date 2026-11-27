@@ -5,84 +5,87 @@
 
 body {
   margin: 0;
-  background: #17120f;
+  background: #17110e;
   color: #fff1dc;
   font-family: Arial, sans-serif;
 }
 
 header {
-  background: #291b14;
-  padding: 18px 25px;
-  border-bottom: 2px solid #70472b;
+  background: #261812;
+  border-bottom: 2px solid #79502e;
+  padding: 20px 35px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 15px;
 }
 
 h1 {
+  color: #ffca79;
+  font-size: 30px;
   margin: 0;
-  color: #ffc46b;
 }
 
 .header-stats {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
-  color: #d6b99b;
-  font-size: 13px;
+  color: #d9b995;
+  font-size: 14px;
 }
 
 .game-layout {
-  display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
-  max-width: 1200px;
+  max-width: 1250px;
   margin: auto;
-  min-height: 75vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 80vh;
 }
 
 .cookie-section {
-  padding: 30px 20px;
+  padding: 35px;
   text-align: center;
-  border-right: 1px solid #493023;
+  border-right: 1px solid #493021;
 }
 
 .stats {
+  background: #2b1c14;
+  border: 1px solid #61432c;
+  border-radius: 15px;
+  padding: 20px;
   margin-bottom: 35px;
 }
 
 #cookie-count {
+  font-size: 38px;
   color: #ffc46b;
-  font-size: 36px;
   font-weight: bold;
-  margin-bottom: 10px;
 }
 
 #production, #click-power {
+  margin-top: 10px;
   color: #d6b99b;
-  margin: 7px;
 }
 
 .cookie-area {
   position: relative;
-  min-height: 240px;
+  min-height: 290px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 #cookie {
-  font-size: 170px;
+  font-size: 190px;
   border: none;
   background: none;
   cursor: pointer;
-  transition: transform .12s;
-  filter: drop-shadow(0 8px 8px #0008);
+  filter: drop-shadow(0 12px 15px #0009);
+  transition: transform .15s;
 }
 
 #cookie:hover {
-  transform: scale(1.08);
+  transform: scale(1.08) rotate(-5deg);
 }
 
 #cookie:active {
@@ -92,90 +95,83 @@ h1 {
 #floating-text {
   position: absolute;
   top: 15px;
-  color: #ffdb75;
-  font-size: 24px;
+  color: #ffd36f;
+  font-size: 25px;
   font-weight: bold;
   pointer-events: none;
 }
 
 .float {
-  animation: floatUp .8s ease-out forwards;
+  animation: floatUp .8s forwards;
 }
 
 @keyframes floatUp {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-65px); }
-}
-
-.click-hint {
-  color: #c8a98b;
+  to {
+    opacity: 0;
+    transform: translateY(-65px);
+  }
 }
 
 #golden-cookie {
   position: absolute;
   top: 0;
   right: 5%;
-  font-size: 50px;
+  font-size: 55px;
+  background: none;
   border: none;
-  background: transparent;
   cursor: pointer;
-  animation: goldenPulse .7s infinite alternate;
+  animation: pulse .7s infinite alternate;
+}
+
+@keyframes pulse {
+  to { transform: scale(1.2); }
 }
 
 .hidden {
   display: none !important;
 }
 
-@keyframes goldenPulse {
-  to { transform: scale(1.2) rotate(12deg); }
+.click-hint {
+  color: #d6b99b;
 }
 
-.progress-box {
-  margin: 35px auto;
-  max-width: 330px;
-  color: #d6b99b;
+.progress-box, .achievements {
+  background: #291b14;
+  border: 1px solid #543923;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 25px;
 }
 
 .progress-bar {
   height: 12px;
-  background: #493023;
+  background: #493021;
   border-radius: 20px;
   overflow: hidden;
 }
 
 #achievement-progress {
   height: 100%;
-  width: 0%;
-  background: #e5a83d;
+  width: 0;
+  background: #e8ad4c;
   transition: width .3s;
 }
 
-.achievements {
-  background: #251a14;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: left;
-}
-
-.achievements h2 {
-  text-align: center;
-}
-
 .achievement {
-  padding: 9px;
-  margin: 6px 0;
   background: #3a291e;
-  border-radius: 7px;
-  color: #d6b99b;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  color: #cbb399;
 }
 
 .achievement.unlocked {
   color: #ffd36f;
-  background: #49351c;
+  background: #55401f;
 }
 
 .shop-section {
-  padding: 25px;
+  padding: 35px;
 }
 
 .shop-section h2 {
@@ -184,19 +180,24 @@ h1 {
 }
 
 .shop-subtitle {
-  color: #c8a98b;
-  font-size: 13px;
+  color: #c4a78d;
+  margin-bottom: 25px;
 }
 
 .building {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px;
-  background: #291e18;
-  border: 1px solid #513a2b;
-  border-radius: 10px;
-  margin: 10px 0;
+  gap: 15px;
+  padding: 15px;
+  margin: 12px 0;
+  background: #291c15;
+  border: 1px solid #59402d;
+  border-radius: 12px;
+  transition: background .2s;
+}
+
+.building:hover {
+  background: #3b291c;
 }
 
 .building-icon {
@@ -205,26 +206,26 @@ h1 {
 
 .building-info {
   flex: 1;
-  min-width: 0;
 }
 
 .building-name {
-  color: #ffd08c;
+  color: #ffcf8b;
   font-size: 16px;
 }
 
 .building-detail {
   color: #bca38b;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: 7px;
+  line-height: 1.6;
 }
 
 .buy-button, .upgrade-button {
-  background: #a8662d;
+  background: #a7662f;
   color: white;
   border: none;
-  border-radius: 7px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 12px;
   cursor: pointer;
   font-weight: bold;
 }
@@ -247,47 +248,53 @@ h1 {
   display: block;
   width: 100%;
   text-align: left;
-  margin: 9px 0;
+  margin: 12px 0;
+  line-height: 1.7;
 }
 
 footer {
+  background: #261812;
+  border-top: 1px solid #59402d;
   padding: 25px;
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 15px;
   flex-wrap: wrap;
-  background: #291b14;
 }
 
 footer button {
-  padding: 12px 18px;
-  background: #69442c;
-  border: none;
-  border-radius: 7px;
+  padding: 13px 20px;
+  background: #754727;
   color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 footer button:hover {
-  background: #98623b;
+  background: #a7662f;
 }
 
-@media (max-width: 700px) {
+@media(max-width: 750px) {
   .game-layout {
     grid-template-columns: 1fr;
   }
 
   .cookie-section {
     border-right: none;
-    border-bottom: 1px solid #493023;
+    border-bottom: 1px solid #493021;
+  }
+
+  .header-stats {
+    flex-direction: column;
+    gap: 7px;
   }
 
   #cookie {
-    font-size: 140px;
+    font-size: 145px;
   }
 
-  header {
-    justify-content: center;
-    text-align: center;
+  .shop-section {
+    padding: 20px;
   }
 }
