@@ -1,48 +1,293 @@
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5deb3;
-  color: #754321;
+  background: #17120f;
+  color: #fff1dc;
   font-family: Arial, sans-serif;
-  text-align: center;
 }
 
-.game {
-  padding: 24px;
+header {
+  background: #291b14;
+  padding: 18px 25px;
+  border-bottom: 2px solid #70472b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 h1 {
-  margin: 0 0 18px;
-  font-size: clamp(2rem, 7vw, 3rem);
+  margin: 0;
+  color: #ffc46b;
 }
 
-#score {
-  margin: 0 0 24px;
-  font-size: 1.7rem;
+.header-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  color: #d6b99b;
+  font-size: 13px;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+  max-width: 1200px;
+  margin: auto;
+  min-height: 75vh;
+}
+
+.cookie-section {
+  padding: 30px 20px;
+  text-align: center;
+  border-right: 1px solid #493023;
+}
+
+.stats {
+  margin-bottom: 35px;
+}
+
+#cookie-count {
+  color: #ffc46b;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#production, #click-power {
+  color: #d6b99b;
+  margin: 7px;
+}
+
+.cookie-area {
+  position: relative;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #cookie {
-  border: 0;
-  padding: 0;
-  background: transparent;
-  font-size: clamp(110px, 25vw, 170px);
+  font-size: 170px;
+  border: none;
+  background: none;
   cursor: pointer;
-  user-select: none;
-  transition: transform 0.1s;
+  transition: transform .12s;
+  filter: drop-shadow(0 8px 8px #0008);
+}
+
+#cookie:hover {
+  transform: scale(1.08);
 }
 
 #cookie:active {
-  transform: scale(0.88);
+  transform: scale(.88);
 }
 
-.hint {
-  margin-top: 22px;
-  color: #8a5a35;
+#floating-text {
+  position: absolute;
+  top: 15px;
+  color: #ffdb75;
+  font-size: 24px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.float {
+  animation: floatUp .8s ease-out forwards;
+}
+
+@keyframes floatUp {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-65px); }
+}
+
+.click-hint {
+  color: #c8a98b;
+}
+
+#golden-cookie {
+  position: absolute;
+  top: 0;
+  right: 5%;
+  font-size: 50px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  animation: goldenPulse .7s infinite alternate;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes goldenPulse {
+  to { transform: scale(1.2) rotate(12deg); }
+}
+
+.progress-box {
+  margin: 35px auto;
+  max-width: 330px;
+  color: #d6b99b;
+}
+
+.progress-bar {
+  height: 12px;
+  background: #493023;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+#achievement-progress {
+  height: 100%;
+  width: 0%;
+  background: #e5a83d;
+  transition: width .3s;
+}
+
+.achievements {
+  background: #251a14;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.achievements h2 {
+  text-align: center;
+}
+
+.achievement {
+  padding: 9px;
+  margin: 6px 0;
+  background: #3a291e;
+  border-radius: 7px;
+  color: #d6b99b;
+}
+
+.achievement.unlocked {
+  color: #ffd36f;
+  background: #49351c;
+}
+
+.shop-section {
+  padding: 25px;
+}
+
+.shop-section h2 {
+  color: #ffc46b;
+  margin-top: 0;
+}
+
+.shop-subtitle {
+  color: #c8a98b;
+  font-size: 13px;
+}
+
+.building {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  background: #291e18;
+  border: 1px solid #513a2b;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.building-icon {
+  font-size: 35px;
+}
+
+.building-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.building-name {
+  color: #ffd08c;
+  font-size: 16px;
+}
+
+.building-detail {
+  color: #bca38b;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.buy-button, .upgrade-button {
+  background: #a8662d;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.buy-button:hover, .upgrade-button:hover {
+  background: #d18b43;
+}
+
+.buy-button:disabled, .upgrade-button:disabled {
+  background: #514238;
+  color: #988575;
+  cursor: not-allowed;
+}
+
+.upgrade-heading {
+  margin-top: 35px !important;
+}
+
+.upgrade-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 9px 0;
+}
+
+footer {
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #291b14;
+}
+
+footer button {
+  padding: 12px 18px;
+  background: #69442c;
+  border: none;
+  border-radius: 7px;
+  color: white;
+  cursor: pointer;
+}
+
+footer button:hover {
+  background: #98623b;
+}
+
+@media (max-width: 700px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cookie-section {
+    border-right: none;
+    border-bottom: 1px solid #493023;
+  }
+
+  #cookie {
+    font-size: 140px;
+  }
+
+  header {
+    justify-content: center;
+    text-align: center;
+  }
 }
